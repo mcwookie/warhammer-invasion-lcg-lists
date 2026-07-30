@@ -10,6 +10,7 @@ This is a **data-only** repo — card text and stats, no card images/scans.
 
   | Column | Description |
   |---|---|
+  | `unique_id` | A stable 5-digit ID unique across every card in the game — see below |
   | `name` | Card name |
   | `edition` | Expansion/pack name |
   | `card_number` | Printed card number within its edition |
@@ -25,6 +26,37 @@ This is a **data-only** repo — card text and stats, no card images/scans.
   | `card_quantity` | Print run quantity (copies per edition), where known |
 
   Not every column applies to every card type (e.g. a Tactic card has no `power`/`health`) — those cells are simply blank.
+
+### The `unique_id` field
+
+Unlike MarvelCDB/ArkhamDB/RingsDB, this game has no official global card ID
+— FFG's own printed `card_number` only resets to 1 at the start of each
+**6-pack battle-pack cycle**, not per individual pack (e.g. Bleeding Sun,
+the 6th pack of the Enemy cycle, is numbered 101-120 on the actual cards).
+
+`unique_id` is a 5-digit `<2-digit set><3-digit card_number>` ID that
+treats each 6-pack cycle as one "set" (matching how FFG already numbered
+it), so `card_number` can be reused as-is with zero exceptions — every
+cycle's `card_number` values already form a clean, non-overlapping 1-120
+sequence across its 6 packs. Sets are ordered by real-world release date:
+
+| Set | Contents |
+|---|---|
+| 01 | Core Set |
+| 02 | The Corruption Cycle (6 packs) |
+| 03 | Assault on Ulthuan |
+| 04 | The Enemy Cycle (6 packs) |
+| 05 | March of the Damned |
+| 06 | The Morrslieb Cycle (6 packs) |
+| 07 | Legends |
+| 08 | The Capital Cycle (6 packs) |
+| 09 | The Bloodquest Cycle (6 packs) |
+| 10 | The Eternal War Cycle (6 packs) |
+| 11 | Cataclysm |
+| 12 | Hidden Kingdoms |
+
+E.g. `01017` = Core Set card #17 (A Glorious Death); `04101` = Enemy cycle
+card #101 (Oathbearer, printed on the Bleeding Sun pack).
 
 ## Sources
 
