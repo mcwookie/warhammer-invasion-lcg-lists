@@ -12,7 +12,7 @@ This is a **data-only** repo — card text and stats, no card images/scans.
   |---|---|
   | `unique_id` | A stable 5-digit ID unique across every card in the game — see below |
   | `name` | Card name |
-  | `edition` | Expansion/pack name |
+  | `pack_code` | A slug identifying the edition/expansion (e.g. `core-set`) — join against `whi_packs.json`'s `code` column for the full pack name and metadata |
   | `card_number` | Printed card number within its edition |
   | `race` | Faction/race (Dwarf, Empire, Orc, Chaos, High Elf, Dark Elf, Neutral) |
   | `type` | Card type (Unit, Support, Tactic, Quest, Legend, etc.) |
@@ -26,6 +26,17 @@ This is a **data-only** repo — card text and stats, no card images/scans.
   | `card_quantity` | Print run quantity (copies per edition), where known |
 
   Not every column applies to every card type (e.g. a Tactic card has no `power`/`health`) — those cells are simply blank.
+
+* `whi_packs.json` / `whi_packs.csv` — one row per edition/expansion (42 total).
+
+  | Column | Description |
+  |---|---|
+  | `code` | Matches `pack_code` in `whi_full.json` |
+  | `name` | Full pack name |
+  | `position` | 1-based release order (Core Set is 1, then each expansion in the order it actually released) |
+  | `total_unique` | Distinct card count in that edition — always populated |
+  | `total_cards` | Physical print-run count (sum of every card's `card_quantity`) — blank for 6 editions where that data isn't fully known; see [Known limitations](#known-limitations) |
+  | `available` | Release date, `YYYY-MM-DD` — see [The `available` field](#the-available-field) for how precise this really is |
 
 ### The `unique_id` field
 
@@ -58,6 +69,26 @@ sequence across its 6 packs. Sets are ordered by real-world release date:
 E.g. `01017` = Core Set card #17 (A Glorious Death); `04101` = Enemy cycle
 card #101 (Oathbearer, printed on the Bleeding Sun pack).
 
+Note this "set" grouping (12 groups, one per cycle) is different from
+`whi_packs.json`'s `position` field (42 individual packs, true
+chronological order) — a pack's `unique_id` set number and its release
+`position` are two different numbering schemes for two different
+purposes, not the same thing spelled two ways.
+
+### The `available` field
+
+Release order (`position`) and month came from Wikipedia's Warhammer:
+Invasion article — BoardGameGeek, the usual source for exact release
+dates, blocks automated access. **Exact release day is only confirmed
+for 2 of the 42 packs** (Cataclysm: 2013-07-09, Hidden Kingdoms:
+2013-11-26, both from Fantasy Flight's own "now available" announcement
+pages). For every other pack, `available` uses the 1st of the release
+month as a documented placeholder — it is **not** a claim that the pack
+actually released on that literal day. Where a deluxe expansion released
+in the same month as a battle pack (e.g. Assault on Ulthuan and The
+Deathmaster's Dance, both March 2010), the ordering between them is a
+judgment call, not a sourced fact.
+
 ## Sources
 
 Source data came from the following sources. Many thanks to the creators:
@@ -66,9 +97,14 @@ Source data came from the following sources. Many thanks to the creators:
 * Card data from [deckbox.org](https://deckbox.org/games/whi/cards).
 * CardGameDB (originally at <https://cardgamedb.com>, now redirecting to [Fantasy Flight Games](https://fantasyflightgames.com)). Archived data was accessed via the [Wayback Machine](https://web.archive.org/).
 
+## Known limitations
+
+* `whi_packs.json`'s `total_cards` is blank for 6 of the 42 editions — Core Set, The Skavenblight Threat, Assault on Ulthuan, The Burning of Derricksburg, Cataclysm, and Hidden Kingdoms — because `card_quantity` isn't populated for every card in those editions, and a partial sum would look like a real total without being one. `total_unique` has no such gap.
+* CardGameDB/Wayback Machine coverage alone reaches 995/1,133 cards (88%); the Tabletop Simulator mod above filled the rest, bringing full detail to 1,133/1,133 (100%).
+
 ## License and data ownership
 
-The **compilation** in this repo — the merging, cross-referencing, and formatting of card data pulled from the sources above into `whi_full.json` and `whi_full.csv` — is my own work. I release it under [CC0 1.0](LICENSE) (public domain dedication): use, adapt, or redistribute it for any purpose, with no attribution required.
+The **compilation** in this repo — the merging, cross-referencing, and formatting of card data pulled from the sources above into `whi_full.json`, `whi_full.csv`, `whi_packs.json`, and `whi_packs.csv` — is my own work. I release it under [CC0 1.0](LICENSE) (public domain dedication): use, adapt, or redistribute it for any purpose, with no attribution required.
 
 That said, the **underlying card content** itself (card names, rules text, stats, flavor text, and the Warhammer Invasion LCG setting and characters) is **not** my work and not my intellectual property. It is © Games Workshop Limited and/or Fantasy Flight Publishing, Inc. (Fantasy Flight Games), all rights reserved. It's reproduced here for reference, archival, and fan-preservation purposes only, in the same spirit as other fan-run card databases for Fantasy Flight LCGs (e.g. MarvelCDB, ArkhamDB, RingsDB) — not as a claim of ownership over the game or its content.
 
